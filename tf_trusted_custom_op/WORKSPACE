@@ -9,11 +9,31 @@ http_archive(
     strip_prefix = "rules_proto-d86ca6bc56b1589677ec59abfa0bed784d6b7767",
 )
 
+# match TF 1.14.0 protobuf versions
+# 5902e759108d14ee8e6b0b07653dac2f4e70ac73 is based on 3.7.1 with a fix for BUILD file.
+PROTOBUF_URLS = [
+  "http://mirror.tensorflow.org/github.com/protocolbuffers/protobuf/archive/5902e759108d14ee8e6b0b07653dac2f4e70ac73.tar.gz",
+  "https://github.com/protocolbuffers/protobuf/archive/5902e759108d14ee8e6b0b07653dac2f4e70ac73.tar.gz",
+  ]
+PROTOBUF_SHA256 = "1c020fafc84acd235ec81c6aac22d73f23e85a700871466052ff231d69c1b17a"
+PROTOBUF_STRIP_PREFIX = "protobuf-5902e759108d14ee8e6b0b07653dac2f4e70ac73"
+
 http_archive(
-    name = "com_google_protobuf",
-    urls = ["https://github.com/protocolbuffers/protobuf/archive/v3.6.1.2.tar.gz"],
-    strip_prefix = "protobuf-3.6.1.2",
-    sha256 = "2244b0308846bb22b4ff0bcc675e99290ff9f1115553ae9671eba1030af31bc0",
+  name = "com_google_protobuf",
+  sha256 = PROTOBUF_SHA256,
+  strip_prefix = PROTOBUF_STRIP_PREFIX,
+  urls = PROTOBUF_URLS,
+)
+
+# required by new build
+# https://github.com/bazelbuild/bazel-skylib/release
+http_archive(
+  name = "bazel_skylib",
+  sha256 = "1dde365491125a3db70731e25658dfdd3bc5dbdfd11b840b3e987ecf043c7ca0",
+  urls = [
+    "https://storage.googleapis.com/mirror.tensorflow.org/github.com/bazelbuild/bazel-skylib/releases/download/0.9.0/bazel_skylib-0.9.0.tar.gz",
+    "https://github.com/bazelbuild/bazel-skylib/releases/download/0.9.0/bazel_skylib-0.9.0.tar.gz",
+  ],
 )
 
 load("@build_stack_rules_proto//cpp:deps.bzl", "cpp_grpc_library")
@@ -28,3 +48,4 @@ load("//tf:tf_configure.bzl", "tf_configure")
 tf_configure(
     name = "local_config_tf",
 )
+

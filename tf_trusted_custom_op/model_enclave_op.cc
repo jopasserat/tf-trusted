@@ -18,7 +18,7 @@ REGISTER_OP("ModelPredictEnclave")
 struct ClientResource : public ResourceBase {
   ModelClient client;
 
-  std::string DebugString() {
+  std::string DebugString() const {
     return std::string("i'm a client");
   }
 };

@@ -181,15 +181,17 @@ def _tf_pip_impl(repository_ctx):
         "tf_header_include",
     )
 
+    # FIXME hardcoded new name for libtensorflow_framework.so (since TF 1.14.0)
+    # according to https://github.com/tensorflow/tensorflow/issues/30175#issuecomment-505929290
     tf_shared_library_dir = repository_ctx.os.environ[_TF_SHARED_LIBRARY_DIR]
-    tf_shared_library_path = "%s/libtensorflow_framework.so" % tf_shared_library_dir
+    tf_shared_library_path = "%s/libtensorflow_framework.so.1" % tf_shared_library_dir
     tf_shared_library_rule = _symlink_genrule_for_dir(
         repository_ctx,
         None,
         "",
-        "libtensorflow_framework.so",
+        "libtensorflow_framework.so.1",
         [tf_shared_library_path],
-        ["libtensorflow_framework.so"],
+        ["libtensorflow_framework.so.1"],
     )
 
     _tpl(repository_ctx, "BUILD", {
