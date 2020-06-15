@@ -34,6 +34,14 @@ $ sudo apt install docker.io
 
 Follow the instructions for building the TensorFlow custom operation located [here](tf_trusted_custom_op/README.md).
 
+#### Install TF Trusted custom op
+
+To be able to run the `model_run.py` script from anywhere on your machine you can install it with pip:
+
+```
+pip install -e .
+```
+
 ### Build and Run TF Trusted
 
 First, we will run TF Trusted in simulation mode. This makes it easy for testing new programs on with Asylo because you don't actually need the enclaves devices on the host machine.
@@ -125,11 +133,3 @@ python model_run.py --model_file <location of protobuf model> \
                     --output_name <output node name>
 ```
 
-
-#### Install TF Trusted custom op
-
-To be able to run the `model_run.py` script from anywhere on your machine you can install it with pip:
-
-```
-pip install -e .
-```
