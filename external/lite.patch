@@ -1,21 +1,21 @@
 diff --git a/tensorflow/lite/BUILD b/tensorflow/lite/BUILD
-index 18fd1c1012..44e806d364 100644
+index f43b8fd4c1..811f3aef05 100644
 --- a/tensorflow/lite/BUILD
 +++ b/tensorflow/lite/BUILD
-@@ -154,7 +154,7 @@ cc_library(
+@@ -165,7 +165,7 @@ cc_library(
+             "mmap_allocation_disabled.cc",
          ],
          "//conditions:default": [
-             "nnapi_delegate_disabled.cc",
 -            "mmap_allocation.cc",
 +            "mmap_allocation_disabled.cc",
          ],
      }),
      hdrs = [
 diff --git a/tensorflow/lite/kernels/BUILD b/tensorflow/lite/kernels/BUILD
-index bad1c4aebf..d27ea01ff2 100644
+index 95f554adcf..686ac97a53 100644
 --- a/tensorflow/lite/kernels/BUILD
 +++ b/tensorflow/lite/kernels/BUILD
-@@ -18,7 +18,7 @@ EXTRA_EIGEN_COPTS = select({
+@@ -25,7 +25,7 @@ EXTRA_EIGEN_COPTS = select({
          "/DEIGEN_HAS_C99_MATH",
          "/DEIGEN_AVOID_STL_ARRAY",
      ],
@@ -23,12 +23,12 @@ index bad1c4aebf..d27ea01ff2 100644
 +    "//conditions:default": ["-Wno-error=reorder -DEIGEN_NO_CPUID"],
  })
  
- tf_cc_test(
+ cc_test(
 diff --git a/tensorflow/lite/kernels/internal/round.h b/tensorflow/lite/kernels/internal/round.h
-index cb494bfd53..095d9f7afa 100644
+index d102d37933..dc5679db22 100644
 --- a/tensorflow/lite/kernels/internal/round.h
 +++ b/tensorflow/lite/kernels/internal/round.h
-@@ -30,7 +30,7 @@ inline double TfLiteRound(const double x) { return ::round(x); }
+@@ -31,7 +31,7 @@ inline double TfLiteRound(const double x) { return ::round(x); }
  #else
  template <class T>
  inline T TfLiteRound(const T x) {
@@ -38,33 +38,40 @@ index cb494bfd53..095d9f7afa 100644
  #endif
  
 diff --git a/tensorflow/lite/nnapi/BUILD b/tensorflow/lite/nnapi/BUILD
-index 467a2b7a7b..aea02bd751 100644
+index 8b85a5f118..0ad524c3e5 100644
 --- a/tensorflow/lite/nnapi/BUILD
 +++ b/tensorflow/lite/nnapi/BUILD
-@@ -9,5 +9,5 @@ cc_library(
-     hdrs = [
-         "NeuralNetworksShim.h",
+@@ -12,7 +12,7 @@ cc_library(
      ],
--    linkopts = ["-ldl"],
-+    #linkopts = ["-ldl"],
+     linkopts = select({
+         "//tensorflow:windows": [],
+-        "//conditions:default": ["-ldl"],
++        "//conditions:default": [],
+     }),
  )
-diff --git a/tensorflow/workspace.bzl b/tensorflow/workspace.bzl
-index dff151246a..f3c3663c7d 100755
---- a/tensorflow/workspace.bzl
-+++ b/tensorflow/workspace.bzl
-@@ -136,11 +136,11 @@ def tf_workspace(path_prefix = "", tf_repo_name = ""):
-     tf_http_archive(
-         name = "eigen_archive",
-         build_file = clean_dep("//third_party:eigen.BUILD"),
--        sha256 = "753fbb58d0a49b6bcbcfb126ebfa2e21fc97f7471529ba835a096008ce588d8a",
--        strip_prefix = "eigen-eigen-9f48e814419e",
-+        sha256 = "8b3e1c0494af6b616ef3f2a107e093be1ea57c6a34f277edb2bdb1dbf3e3870a",
-+        strip_prefix = "eigen-eigen-4fe5a1014743",
-         urls = [
--            "https://mirror.bazel.build/bitbucket.org/eigen/eigen/get/9f48e814419e.tar.gz",
--            "https://bitbucket.org/eigen/eigen/get/9f48e814419e.tar.gz",
-+            "http://mirror.tensorflow.org/bitbucket.org/eigen/eigen/get/4fe5a1014743.tar.gz",
-+            "https://bitbucket.org/eigen/eigen/get/4fe5a1014743.tar.gz",
-         ],
-     )
  
+@@ -26,7 +26,7 @@ cc_library(
+             "nnapi_implementation_disabled.cc",
+         ],
+         "//conditions:default": [
+-            "nnapi_implementation.cc",
++            "nnapi_implementation_disabled.cc",
+         ],
+     }),
+     hdrs = [
+@@ -34,13 +34,13 @@ cc_library(
+     ],
+     linkopts = select({
+         "//tensorflow:windows": [],
+-        "//conditions:default": ["-ldl"],
++        "//conditions:default": [],
+     }) + select({
+         "//tensorflow:android": [],
+         "//tensorflow:macos": [],
+         "//tensorflow:ios": [],
+         "//tensorflow:windows": [],
+-        "//conditions:default": ["-lrt"],
++        "//conditions:default": [],
+     }),
+     deps = [
+         "//tensorflow/lite/nnapi:nnapi_lib",
