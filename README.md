@@ -16,7 +16,7 @@ Bazel is required to build this custom operation. It can be downloaded from [her
 
 #### Python and Tensorflow
 
-TF Trusted also requires python 3.5, 3.6 be installed along with tensorflow 1.13.1. You can install these using your favourite python version manager. We recommend using conda.
+TF Trusted also requires python 3.5, 3.6 be installed along with tensorflow 1.14.0. You can install these using your favourite python version manager. We recommend using conda.
 
 #### Install Docker
 
@@ -46,10 +46,13 @@ $ docker run -it --rm \
   -v `pwd`:/opt/my-project \
   -w /opt/my-project \
   -p 50051:50051/tcp -p 50051:50051/udp \
-  gcr.io/asylo-framework/asylo:buildenv-v0.3.4 \
-  bazel run --config=enc-sim //tf_trusted \
-  --incompatible_disallow_filetype=false --incompatible_disallow_data_transition=false
+  gcr.io/asylo-framework/asylo:buildenv-v0.4.0 \
+  bash -c '\
+  ln -sf python3 /usr/bin/python && \
+  bazel run --config=enc-sim //tf_trusted --incompatible_disallow_filetype=false'
 ```
+
+(*notice the symlink update required in the command line above to set the default python version in the container to python3 as needed  by TF's build procedure*)
 
 #### Run a Model
 
@@ -103,9 +106,11 @@ $ docker run -it --rm --device=/dev/isgx \
   -v bazel-cache:/root/.cache/bazel \
   -v `pwd`:/opt/my-project \
   -w /opt/my-project  -p 50051:50051/tcp -p 50051:50051/udp \
-  gcr.io/asylo-framework/asylo \
+  gcr.io/asylo-framework/asylo:buildenv-v0.4.0 \
+  bash -c '\
+  ln -sf python3 /usr/bin/python && \
   bazel run --config=sgx --define=SGX_SIM=0 //tf_trusted \
-  --incompatible_disallow_filetype=false --incompatible_disallow_data_transition=false
+  --incompatible_disallow_filetype=false'
 ```
 
 #### Run a Model
